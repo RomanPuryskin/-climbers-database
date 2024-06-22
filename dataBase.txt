@@ -1,0 +1,488 @@
+/*1. Написать команды создания таблиц заданной схемы с указанием
+необходимых ключей и ограничений. Должны быть установлены все
+ограничения первичного и внешних ключей. Все ограничения должны
+быть именованными (для первичных ключей имена должны
+начинаться с префикса «PK_», для вторичного ключа – «FK_»,
+проверки - «CH_»). Все имена полей и типы данных должны
+полностью соответствовать схеме (до языка и регистра).
+Ограничения: дата начала восхождения не может быть больше даты
+завершения восхождения; значение высоты не может отрицательным;
+значение null допустимо только в поле адрес*/
+ CREATE table CLIMBERS
+ (
+ 	CLIMBER_ID INTEGER,
+   	FULL_NAME VARCHAR(100),
+   	ADRESS VARCHAR(100),
+   	PHONE_NUMBER VARCHAR(100),
+   	BIRTHDAY DATE,
+   	CONSTRAINT  PK_CLIMBERS PRIMARY KEY (CLIMBER_ID),
+   	CONSTRAINT CH_CLIMBERS_NOT_NULL CHECK( CLIMBER_ID IS NOT NULL AND FULL_NAME IS NOT NULL AND	PHONE_NUMBER IS NOT NULL AND BIRTHDAY IS NOT NULL) 
+ );
+ 
+ CREATE TABLE PEAKS
+ (
+ 	PEAK_ID INTEGER,
+   	NAME VARCHAR(100),
+   	HEIGHT INTEGER,
+   	COUNTRY VARCHAR(100),
+   	REGION VARCHAR(100),
+   	CONSTRAINT  PK_PEAKS PRIMARY KEY (PEAK_ID),
+   	CONSTRAINT CH_PEAKS_NOT_NULL CHECK( PEAK_ID IS NOT NULL AND NAME IS NOT NULL AND HEIGHT IS NOT NULL AND COUNTRY IS NOT NULL AND REGION IS NOT NULL) 
+ );
+ 
+ CREATE TABLE CLIMBINGS
+ (
+ 	CLIMBING_ID INTEGER,
+   	START_CLIMBING TIMESTAMP WITHOUT TIME ZONE,
+   	END_CLIMBING TIMESTAMP WITHOUT TIME ZONE,
+   	PEAK_ID INTEGER,
+   	CONSTRAINT  PK_CLIMBING PRIMARY KEY (CLIMBING_ID),
+   	CONSTRAINT CH_DATE_CLIMBING CHECK (START_CLIMBING < END_CLIMBING),
+   	CONSTRAINT CH_NOT_NULL CHECK (CLIMBING_ID IS NOT NULL AND PEAK_ID IS NOT NULL),
+   	CONSTRAINT FK_CLIMBING FOREIGN KEY (PEAK_ID) REFERENCES PEAKS(PEAK_ID)
+ );
+ 
+ CREATE TABLE CLIMERS_CLIMBINGS
+(
+    CLIMBER_ID INTEGER,
+    CLIMBING_ID INTEGER, 
+    CONSTRAINT  PK_CLIBER_CLIMBERS PRIMARY KEY (CLIMBER_ID, CLIMBING_ID),
+    CONSTRAINT FK_CLIMBERS FOREIGN KEY (CLIMBER_ID) REFERENCES CLIMBERS(CLIMBER_ID),
+    CONSTRAINT FK_CLIMBING FOREIGN KEY (CLIMBING_ID) REFERENCES CLIMBINGS(CLIMBING_ID),
+    CONSTRAINT CH__NOT_NULL CHECK (CLIMBER_ID IS NOT NULL AND CLIMBING_ID IS NOT NULL)
+);
+
+/* 2 Заполнить созданные таблицы данными, 5-10 записей для каждой
+таблицы.*/
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(1,'Абашин Максим Викторович','г.Томск, ул. Говорова 20, кв 5','+79073455671',TO_DATE('1997-10-09 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(2,'Васечко Алексей Андреевич','г.Томск, ул. Красноармейская 40, кв 1','+79123456710',TO_DATE('1998-10-12 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(3,'Черепнин Кирилл Петрович','г.Томск, пр. Мира 2, кв 50','+79065678909',TO_DATE('1990-08-09 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(4,'Пересыпкин Илья Алексеевич','г.Томск, ул. Розы Люксембург 13, кв 15','+79081233421',TO_DATE('2000-02-19 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(5,'Веткина Анна Сергеевна','г.Томск, ул. Чкалова 10, кв 7','+79102455656',TO_DATE('1991-11-28 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(6,'Гончаров Дмитрий Вячеславович','г.Томск, ул. Шишкова 16, кв 2','+79086782112',TO_DATE('1995-07-16 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(7,'Горная Ирина Дмитриевна','г.Томск, ул. Энтузиастов 11, кв 90','+79134560954',TO_DATE('1997-08-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(8,'Березкина Юлия Макаровна','г.Томск, ул. Герцена 24','+79521770657',TO_DATE('1994-06-21 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(9,'Печкин Даниил Маратович','г.Северск, ул. Славского 40, кв 10','+79087087777',TO_DATE('1999-09-17 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+insert into climbers(climber_id,full_name,adress,phone_number,birthday) VALUES(10,'Мусажонов Жон Исмаилжонович','г.Томск, ул. Сибирская 18, кв 6','+79073451234',TO_DATE('1998-05-06 00:00:00', 'YYYY-MM-DD hh24:mi:ss'));
+
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (1,'Эверест',8848,'Непал','Гималаи');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (2,'Чогори',8612,'Пакистан','Гималаи');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (3,'Эльбрус',5642,'Россия','Кабардино-Балкария');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (4,'Белуха',4509,'Россия','Алтай');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (5,'Актуру',4044,'Россия','Алтай');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (6,'Кросс-Фелл',8848,'Англия','Лейк-Дистрикт');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (7,'Броуд-Пик',8051,'Пакинстан','Каракорум');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (8,'Джая',4884,'Австралия','Новая Гвинея');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (9,'Мак-Кинли',6194,'США','Аляска');
+INSERT INTO peaks(peak_id,name,height,country,region) VALUES (10,'Аконкагуа',6962,'Аргентина','Мендоса');
+
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (1,TO_DATE('2003-10-09 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2003-10-12 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),5);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (2,TO_DATE('2000-02-11 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2000-02-21 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),1);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (3,TO_DATE('1999-05-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('1999-05-05 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),10);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (4,TO_DATE('2001-03-19 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2001-03-22 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),7);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (5,TO_DATE('2007-07-15 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2007-07-20 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),2);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (6,TO_DATE('2002-09-09 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2002-09-13 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),4);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (7,TO_DATE('2010-04-08 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2010-04-10 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),3);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (8,TO_DATE('1995-08-21 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('1995-08-23 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),8);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (9,TO_DATE('2004-10-09 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2004-10-12 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),6);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (10,TO_DATE('2008-06-05 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2008-06-10 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),9);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (11,TO_DATE('2022-06-10 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2022-06-20 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),4);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (12,TO_DATE('2022-02-11 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2022-02-18 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),4);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (13,TO_DATE('2023-10-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2023-10-05 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),4);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (14,TO_DATE('2022-11-19 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2022-11-26 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),4);
+INSERT INTO climbings(climbing_id,start_climbing,end_climbing,peak_id) VALUES (15,TO_DATE('2023-07-15 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),TO_DATE('2023-07-20 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),4);
+INSERT INTO climbings(climbing_id,start_climbing,peak_id) VALUES (16,TO_DATE('2023-12-02 00:00:00', 'YYYY-MM-DD hh24:mi:ss'),9);
+
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (5,3);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (1,7);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (7,4);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (2,8);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (10,1);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (6,2);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (3,5);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (8,10);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (9,9);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (4,6);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (3,15);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (7,13);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (4,14);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (8,11);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (1,12);
+INSERT INTO climers_climbings(climber_id,climbing_id) VALUES (4,16);
+
+
+/*3. Написать запросы. Устранить дублирование только для тех случаев,
+где это потенциально возможно. Каждый запрос должен возвращать не
+менее одного картежа, при необходимости данные добавить.*/
+/*3.1. Вывести все вершины на Алтае, высота которых более 3000 метров, и на которые было совершено не менее 5 восхождений за последние 2 года.
+Результат упорядочить по высоте. */
+select name 
+from (
+    select name,count(start_climbing) as temp_count
+    from peaks
+    join climbings on climbings.peak_id= peaks.peak_id
+    where upper(peaks.region) = 'АЛТАЙ' and peaks.height > 3000 and date_part('year',end_climbing) in (2022,2023)
+    GROUP by name  )
+where temp_count >= 5
+
+/*3.2. Для каждого альпиниста вывести список покорённых вершин, восхождения на которые длилось 30 или менее дней. В выборке должны
+присутствовать только следующие атрибуты: Имя альпиниста, название вершины, длительность восхождения. Результат упорядочить по ФИО,
+длительности. Альпинистов, для которых нет таких вершин не выводить.*/
+select climbers.full_name,peaks.name,date_part('day',end_climbing-start_climbing) as time_climbing
+from climbers
+join climers_climbings ON climers_climbings.climber_id = climbers.climber_id
+join climbings on climers_climbings.climbing_id = climbings.climbing_id
+JOIN peaks on climbings.peak_id = peaks.peak_id
+where date_part('day',end_climbing-start_climbing) <=30
+ORDER by 1,3
+
+/*3.3. Сформировать статистику восхождений по сезонам для завершённых восхождений. В выборке должны присутствовать только следующие
+атрибуты: название сезона (лето, зима и т.д.), число восхождений, количество альпинистов, совершивших восхождения, средняя
+продолжительность восхождения в днях.*/
+select season,sum(количество_восхождений),sum(количество_альпинистов),trunc(avg(среднее_время),1)
+from (
+    select case
+  		when date_part('month',start_climbing) in (01,02,12) then 'зима'
+  		when date_part('month',start_climbing) in (03,04,05) then 'весна'
+  		when date_part('month',start_climbing) in (06,07,08) then 'лето'
+  		else 'осень'
+  		end season, date_part('month',start_climbing) as month,count(start_climbing) as количество_восхождений,count(DISTINCT climers_climbings.climber_id) as количество_альпинистов,trunc(AVG(date_part('day',end_climbing-start_climbing))::NUMERIC , 1 ) as среднее_время
+ 
+    from climbings
+    join climers_climbings on climers_climbings.climbing_id = climbings.climbing_id
+    GROUP by 2)
+GROUP by 1
+
+/*3.4. Для каждой вершины найти общее число восхождений, средний возраст альпинистов, участвовавших в восхождении на эту вершину. Исключить из выборки горы, расположенные в Англии. В выборке должны присутствовать только следующие атрибуты: название
+вершины, общее число восхождений, средний возраст альпинистов, участвовавших в восхождении на эту вершину.*/
+select name,count(start_climbing) as число_восхождений,trunc(avg(date_part('year',CURRENT_DATE) - date_part('year',birthday))::numeric,0) as средний_возраст
+from peaks
+join climbings On climbings.peak_id=peaks.peak_id
+join climers_climbings on climers_climbings.climbing_id=climbings.climbing_id
+join climbers on climbers.climber_id = climers_climbings.climber_id
+where peaks.country != 'Англия'
+GROUP by name
+
+/*3.5. Вывести вершины, высота которых меньше средней по региону. В выборке должны присутствовать только следующие атрибуты: регион,
+название вершины, высота, средняя высота по региону.*/
+select region,средняя_высота,peaks.name,height
+from
+  (select region as tr,trunc(avg(height)::NUMERIC,1) as средняя_высота
+    from peaks
+    GROUP by 1) as temp_1
+left join peaks ON peaks.region = temp_1.tr
+where height < средняя_высота
+
+/*3.6. Для каждого альпиниста вывести число вершин, на которые кроме него никто не совершал восхождения. В выборке должны присутствовать
+только следующие атрибуты: Имя альпиниста, название вершины, количество восхождений на эту вершину. */
+select full_name,вершина,количество_восхождений
+from(
+    select peaks.name as вершина, count (start_climbing) as количество_восхождений,
+        case 
+        when count(DISTINCT full_name) = 1 then 't'
+        else 'f'
+        end temp_1
+    from climers_climbings
+    join climbers on climers_climbings.climber_id = climbers.climber_id
+    join climbings on climers_climbings.climbing_id = climbings.climbing_id
+    join peaks on climbings.peak_id = peaks.peak_id
+    GROUP by вершина ) as peakss
+LEFT JOIN peaks ON peakss.вершина = peaks.name
+join climbings on climbings.peak_id = peaks.peak_id
+join climers_climbings on climers_climbings.climbing_id = climbings.climbing_id
+join climbers on climbers.climber_id = climers_climbings.climber_id
+where temp_1 != 'f'
+
+/*4. Написать запросы на изменение данных.
+4.1. В таблицу “Восхождения” добавить атрибут: “Итоговая продолжительность восхождения”. Для атрибута допустимо значение null. Заполнить
+новое поле значениями для все завершённых восхождений. Продолжительность рассчитывается в днях.*/
+alter table climbings
+add duration INTEGER NULL;
+UPDATE climbings
+set duration = date_part('day',end_climbing) - date_part('day',start_climbing)
+
+/*4.2. Удалить сведенья об альпинистах, не совершивших ни одного восхождения.*/
+delete from climbers USING climers_climbings
+where climers_climbings.climber_id = climbers.climber_id and climers_climbings.climbing_id is NULL
+
+/*4.3. Выделить справочник регионов в отдельную таблицу*/
+create table regions
+(
+	id INTEGER PRIMARY key,
+  	name_region VARCHAR(100) UNIQUE
+);
+
+insert into regions values (1,'Гималаи'),(2,'Алтай'),(3,'Кабардино-Балкария'),(4,'Лейк-Дистрикт'),(5,'Каракорум'),(6,'Новая Гвинея'),(7,'Аляска'),(8,'Мендоса');
+ALTER table peaks
+add COLUMN region_id INTEGER;
+update peaks 
+set region_id = regions.id
+from regions where region=regions.name_region;
+
+alter table peaks
+add CONSTRAINT region
+FOREIGN key (region_id)
+REFERENCES regions (id)
+on DELETE no action;
+
+alter table peaks
+drop COLUMN region
+
+/*5. Создать представления.
+5.1. Оформить запросы 3.5 - 3.6 в виде представления.*/
+CREATE VIEW low_peaks as 
+select name_region,средняя_высота,peaks.name,height
+from
+  (select name_region as tr,trunc(avg(height)::NUMERIC,1) as средняя_высота
+    from peaks
+   	JOIN regions on peaks.region_id = regions.id
+    GROUP by 1) as temp_1
+left join regions ON regions.name_region = temp_1.tr
+join peaks ON regions.id = peaks.region_id
+where height < средняя_высота;
+
+create VIEW climbers_only AS
+select full_name,вершина,количество_восхождений
+from(
+    select peaks.name as вершина, count (start_climbing) as количество_восхождений,
+        case 
+        when count(DISTINCT full_name) = 1 then 't'
+        else 'f'
+        end temp_1
+    from climers_climbings
+    join climbers on climers_climbings.climber_id = climbers.climber_id
+    join climbings on climers_climbings.climbing_id = climbings.climbing_id
+    join peaks on climbings.peak_id = peaks.peak_id
+    GROUP by вершина ) as peakss
+LEFT JOIN peaks ON peakss.вершина = peaks.name
+join climbings on climbings.peak_id = peaks.peak_id
+join climers_climbings on climers_climbings.climbing_id = climbings.climbing_id
+join climbers on climbers.climber_id = climers_climbings.climber_id
+where temp_1 != 'f';
+
+/*5.2. Создать представление, содержащие незавершённые восхождения, со следующими атрибутами: ID_Альпиниста, ФИО, телефон, дата начала
+восхождения (без времени), длительность восхождения в днях (число, прошедших с начала дней), название вершины, высота, страна.*/
+create VIEW not_ended_climbings as
+select climbers.climber_id,climbers.full_name,climbers.phone_number,climbings.start_climbing,date_part('day',CURRENT_date - start_climbing),peaks.name,peaks.height,peaks.country
+from climbings
+join climers_climbings on climers_climbings.climbing_id = climbings.climbing_id
+join climbers on climbers.climber_id = climers_climbings.climber_id
+join peaks on peaks.peak_id = climbings.peak_id
+where climbings.end_climbing is NULL;
+
+/*6. Написать процедуры и функции, согласно условиям. Все процедуры и функции при необходимости должны включать обработчики исключений.
+Названия функций: F_<имя>. Формат названий процедур: P_<имя>. Написать анонимные блоки или запросы для проверки работы процедур и
+функций.
+6.1. Написать функцию, которая возвращает количество восхождений для заданного альпиниста в указанный период (id_альпиниста и промежуток
+времени – аргументы функции). Если промежуток времени не указан, считается количество за всё время.*/
+CREATE FUNCTION F_ClimbingsCount(climber_id_ INTEGER, interval_start DATE,INTERVAL_end DATE) returns  INTEGER
+AS $$
+declare climbings_amount integer;
+BEGIN
+	if INTERVAL_END < INTERVAL_START  then
+		raise EXCEPTION'Введен некорректный ИНТЕРВАЛ.';
+	end if;
+ 	SELECT count(*)
+    INTo climbings_amount
+    from climers_climbings
+    join climbings on climers_climbings.climbing_id=climbings.climbing_id
+    where climers_climbings.climber_id = climber_id_ and ((interval_start is NULL and interval_end is NULL) or (climbings.start_climbing >=interval_start and climbings.end_climbing<=INTERVAL_end));
+    return climbings_amount;
+end;
+ $$ LANGUAGE plpgsql;
+
+/*6.2 Написать функцию, которая для заданной вершины возвращает среднюю длительность восхождений в днях. Значение может рассчитываться за
+конкретный сезон и/или для конкретного альпиниста. Принадлежность восхождения сезону определяется по дате начала, если восхождение ещё не
+завершено, то учитывается число прошедших с его начала дней. Функция имеет три аргумента: id_вершины, сезон (номер от 1 до 4),
+id_альпиниста. Только первый аргумент является обязательным. Предусмотреть вариант вызова функции без необязательных аргументов. */
+create FUNCTION F_duration(peak_id_ integer,season text,climber_id_ integer ) returns INTEGER as $$
+declare duration_ INTEGER;
+BEGIN
+	select avg(date_part('day',climbings.end_climbing - climbings.start_climbing))
+    INto duration_
+    from peaks
+    join climbings on climbings.peak_id = peaks.peak_id
+    join climers_climbings on climers_climbings.climbing_id = climbings.climbing_id
+    where peaks.peak_id = peak_id_ and (climber_id_ is NULL or climers_climbings.climber_id = climber_id_) AND
+    (season is NULL or 
+    	case 
+    	when lower(season) = 'зима' then date_part('month',start_climbing) in (12,01,02)
+     	when lower(season) = 'весна' then date_part('month',start_climbing) in (03,04,05)
+     	when lower(season) = 'лето' then date_part('month',start_climbing) in (06,07,08)
+     	when lower(season) = 'осень' then date_part('month',start_climbing) in (09,10,11)
+     	end );
+    RETURN duration_;
+end;
+ $$ LANGUAGE plpgsql;
+ 
+ select * from f_duration(9,'лето',8)
+
+
+/*6.3. Написать процедуру, которая формирует календарь восхождений для заданного альпиниста. (id_альпиниста и год – параметры функции).
+Формат вывода:
+------------------------------------------------------
+Календарь восхождений для <ФИО> на <год> год:
+<месяц_1>:
+ 1. <Вершина_1>, <дата начала восхождения> – <дата окончания восхождения>;
+ 2. <Вершина_2>, <дата начала восхождения> – <дата окончания восхождения>;
+ <и т. д.> ….
+<месяц_2 (без восхождений)>: восхождения не запланировано
+<и т. д.> …. */
+CREATE OR REPLACE FUNCTION F_calendar(climber_id_ integer , YEAR_ integer) 
+RETURNS VARCHAR(4000) AS $$
+declare output_string VARCHAR(4000);
+declare get_full_name VARCHAR(100);
+declare num INTEGER;
+declare month_count integer;
+Declare temp_record RECORD;
+begin
+
+select full_name
+into get_full_name
+from climbers
+where climbers.climber_id = climber_id_;
+
+IF get_full_name is NULL THEN RETURN 'Неккоректный id альпиниста.'; END IF;
+IF year_ IS NULL THEN RETURN 'Введите дату.'; END IF;
+
+output_string := 'Календарь восхождений для ' || get_full_name || ' на ' || year_ || ' год:'||E'\n';
+for I in 1..12 LOOP
+output_string := output_string ||'месяц '|| i ||':'||E'\n';
+	for temp_record IN
+    	select peaks.name as name_,climbings.start_climbing as start_,climbings.end_climbing as end_
+        from climers_climbings
+        join climbings on climers_climbings.climbing_id = climbings.climbing_id
+        join peaks on climbings.peak_id = peaks.peak_id
+        where climers_climbings.climber_id = climber_id_ and date_part('year', climbings.start_climbing)::INTEGER = YEAR_  AND
+        	date_part('month',climbings.start_climbing) = I
+      	loop
+           		num:=1;
+        		output_string := output_string || E'\t'||num||'. '|| temp_record.name_ || ', ' || temp_record.start_ ||' - ' || temp_record.end_ || E'\n';
+       			num:=num+1;
+        end loop;
+        if temp_record is NULL then output_string := output_string || E'\t'||'(без возхождений): восхождения не запланировано' || E'\n'; end if;
+end LOOp;
+
+RETURN output_string;
+END;
+$$ LANGUAGE plpgsql;
+
+select f_calendar(3,2007)
+
+
+/*6.4. Написать процедуру, которая выполняете копирование всех данных об указанном альпинисте, включая восхождения. Аргумент процедуры -
+id_альпиниста. Для скопированной записи ставится отметка “копия” в поле ФИО.*/
+CREATE OR REPLACE PROCEDURE p_copy_climber(climber_id_ INTEGER) LANGUAGE plpgsql AS $$
+declare new_climber_id integer; /*для полчения нового id альпиниста*/
+DECLARE	new_climbing_id integer; /*для получения нового id восхождения*/
+declare temp_climbing_id integer; /*получение id восхождения заданного альпиниста для копирования этой строки*/ 
+begin
+select max(climbers.climber_id)+1
+into new_climber_id
+from climbers;
+select Max(climbings.climbing_id)+1
+into new_climbing_id
+from climbings;
+
+select climbings.climbing_id
+into temp_climbing_id
+from climbings
+join climers_climbings ON climers_climbings.climbing_id = climbings.climbing_id
+join climbers ON climbers.climber_id = climers_climbings.climber_id
+where climbers.climber_id = climber_id_ ;
+
+
+INSERT into climbers (climber_id,full_name,adress,phone_number,birthday)
+select new_climber_id,cl.full_name || ' копия',cl.adress,cl.phone_number,cl.birthday
+from climbers cl
+where climber_id = climber_id_	;
+
+insert into climbings (climbing_id,start_climbing,end_climbing,peak_id,duration)
+  select new_climbing_id,start_climbing,end_climbing,peak_id,duration
+  from climbings
+  where climbings.climbing_id = temp_climbing_id;
+end;
+$$ 
+
+DELETE FROM climbers
+WHERE climber_id = (select max(climber_id) from climbers);
+DELETE FROM climbings
+WHERE climbing_id = (select max(climbing_id) from climbings);
+
+/*7. Создать триггеры, включить обработчики исключений. Написать скрипты для проверки. При необходимости снять ограничения (если
+ограничение мешает проверить работу триггера).
+7.1. Написать триггер, который активизируются при изменении содержимого таблицы “Восхождения” и проверяет, чтобы возраст альпинистов,
+совершающих восхождения на вершины высотой более 1500 м был более 21 года.*/
+create or replace view climbings_view as
+select * from climbings;
+
+CREATE OR REPLACE FUNCTION trg_climbings_insert()
+RETURNS TRIGGER AS $$
+BEGIN
+	select peaks.peak_id as PI,(date_part('year',CURRENT_DATE)-date_part('year',climbers.birthday)) as CA
+    from climbings
+    join climers_climbings on climers_climbings.climbing_id = climbings.climbing_id
+    join climbers on climbers.climber_id = climers_climbings.climber_id
+    join peaks on peaks.peak_id = climbings.peak_id
+    where peaks.peak_id = NEW.peak_id and climbers.climber_id = NEW.climber_id;
+	if PI >1500 and CA <21 then RAISE EXCEPTION 'Альпинист слишком мал.';
+    else
+    	insert into climbings(climbing_id,start_climbing,end_climbing,peak_id,duration)
+        VALUES (NEW.climbing_id,NEW.start_climbing,NEW.end_climbing,NEW.peak_id,NEW.duration);
+    end if;
+    return null;
+end;
+$$ LANGUAGE plpgsql;
+
+CREATE or replace TRIGGER T1
+INSTEAD OF INSERT ON climbings_view
+FOR EACH ROW
+EXECUTE FUNCTION trg_climbings_insert();
+/*проверка триггера*/
+update climbers set birthday = '2002-02-19' where climber_id = 4;
+
+/*7.2. Написать триггер, который сохраняет статистику изменений таблицы «Восхождения» в таблице «Восхождения_Статистика». В таблице
+«Восхождения_Статистика» хранится дата изменения, тип изменения (insert, update, delete).*/
+create table climbings_statistics
+(
+	change_date date,
+	change_type varchar(100),
+	constraint ch_climbings_statistics check (change_date is not null and change_type is not null)
+);
+
+create or replace function update_climbings_statistics() returns trigger as $$
+begin
+  if TG_OP = 'INSERT' then
+    insert into climbings_statistics (change_date, change_type)
+    values (current_date, 'insert');
+  elsif TG_OP = 'UPDATE' then
+    update climbings_statistics
+    set change_date = current_date, change_type = 'update'
+    where id = OLD.id;
+  elsif TG_OP = 'DELETE' then
+    insert into climbings_statistics (change_date, change_type)
+    values (current_date, 'delete');
+  end if;
+  return null;
+end;
+$$ language plpgsql;
+
+CREATE or REPLACE TRIGGER view_insert after INSERT OR DELETE OR UPDATE ON climbings
+FOR EACH ROW EXECUTE FUNCTION update_climbings_statistics();
+
+insert into climbings(climbing_id,start_climbing,end_climbing,peak_id,duration)
+        VALUES (100,Null,null,5,null);
+delete from climbings WHERE climbing_id = 100
+        
+select * from climbings_statistics
+
+
+
+
+ 
+
+
+
+
+
+
